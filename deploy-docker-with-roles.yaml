@@ -15,14 +15,8 @@
 - name: Create new Linux user
   hosts: all
   become: yes
-  tasks: 
-    - name: Create new Linux user
-      user:
-        name: ashiwaju
-        groups: adm,docker
-        append: yes
-    - name: Reconnect to server session
-      meta: reset_connection
+  roles: 
+    - create_user
 
 
 - name: Install Docker-compose
@@ -50,20 +44,9 @@
   become_user: ashiwaju
   vars_files:
         - project-vars 
-  tasks:
-    - name: Copy docker compose 
-      copy:
-        src: /root/docker-compose-full.yaml
-        dest: /home/ashiwaju/docker-compose.yaml
-            
-    - name: Docker login
-      docker_login:
-          username: ashiwaju
-          password: "{{docker_password}}"
-
-    - name: Start containers from compose
-      community.docker.docker_compose_v2:
-        project_src: /home/ashiwaju
+  roles:
+    - start_containers
+    
 
       
     
